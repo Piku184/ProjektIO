@@ -65,7 +65,7 @@ void MainWindow::insertCalendar()
 
     QTextTableFormat tableFormat;
     tableFormat.setAlignment(Qt::AlignHCenter);
-    tableFormat.setBackground(QColor("#e00f16"));
+    tableFormat.setBackground(QColor("#ff9933"));
     tableFormat.setCellPadding(2);
     tableFormat.setCellSpacing(4);
 
