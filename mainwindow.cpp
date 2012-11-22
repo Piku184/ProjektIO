@@ -1,157 +1,103 @@
 
-
 #include <QtGui>
 
 #include "mainwindow.h"
 
 MainWindow::MainWindow()
 {
-    selectedDate = QDate::currentDate();
-    fontSize = 10;
+    createCalendarViewGroupBox();
+    createOptionsGroupBox();
+    createDayViewGroupBox();
 
 
-    QWidget *centralWidget = new QWidget;
+    QGridLayout *layout = new QGridLayout;
+    layout->addWidget(calendarViewGroupBox, 0, 0);
+    layout->addWidget(optionsGroupBox, 1, 0);
+    layout->addWidget(dayViewGroupBox, 0, 1, 2, 2);
+    layout->setSizeConstraint(QLayout::SetFixedSize);
+    setLayout(layout);
 
+    calendarViewLayout->setRowMinimumHeight(0, calendar->sizeHint().height());
+    calendarViewLayout->setColumnMinimumWidth(0, calendar->sizeHint().width());
 
-    QLabel *dateLabel = new QLabel(tr("Please pick a month and a year:"));
-    QComboBox *monthCombo = new QComboBox;
-
-    for (int month = 1; month <= 12; ++month)
-        monthCombo->addItem(QDate::longMonthName(month));
-
-    QComboBox *yearCombo = new QComboBox;
-
-    for (int year = 2000; year <= 2030; ++year) {
-        QString yearString = QString::number(year);
-        yearCombo->addItem(yearString.toStdString().c_str());
-    }
-
-
-    monthCombo->setCurrentIndex(selectedDate.month() - 1);
-    yearCombo->setCurrentIndex(selectedDate.year() -1);
-
-
-    editor = new QTextBrowser;
-    insertCalendar();
-
-
-    connect(monthCombo, SIGNAL(activated(int)), this, SLOT(setMonth(int)));
-    connect(yearCombo, SIGNAL(activated(int)), this, SLOT(setYear(int)));
-
-
-    QHBoxLayout *controlsLayout = new QHBoxLayout;
-    controlsLayout->addWidget(dateLabel);
-    controlsLayout->addWidget(monthCombo);
-    controlsLayout->addWidget(yearCombo);
-    controlsLayout->addSpacing(24);
-    controlsLayout->addStretch(1);
-
-    QVBoxLayout *centralLayout = new QVBoxLayout;
-    centralLayout->addLayout(controlsLayout);
-    centralLayout->addWidget(editor, 1);
-    centralWidget->setLayout(centralLayout);
-
-    setCentralWidget(centralWidget);
+    setWindowTitle(tr("Daily Organiser"));
 }
 
-void MainWindow::insertCalendar()
+void MainWindow::localeChanged(int index)
 {
-    editor->clear();
-    QTextCursor cursor = editor->textCursor();
-    cursor.beginEditBlock();
+    calendar->setLocale(localeCombo->itemData(index).toLocale());
+}
 
-    QDate date(selectedDate.year(), selectedDate.month(), 1);
-
-
-    QTextTableFormat tableFormat;
-    tableFormat.setAlignment(Qt::AlignHCenter);
-    tableFormat.setBackground(QColor("#ff9933"));
-    tableFormat.setCellPadding(2);
-    tableFormat.setCellSpacing(4);
-
-    QVector<QTextLength> constraints;
-    constraints << QTextLength(QTextLength::PercentageLength, 13)
-                << QTextLength(QTextLength::PercentageLength, 13)
-                << QTextLength(QTextLength::PercentageLength, 13)
-                << QTextLength(QTextLength::PercentageLength, 13)
-                << QTextLength(QTextLength::PercentageLength, 13)
-                << QTextLength(QTextLength::PercentageLength, 13)
-                << QTextLength(QTextLength::PercentageLength, 13)
-                << QTextLength(QTextLength::PercentageLength, 9);
-    tableFormat.setColumnWidthConstraints(constraints);
-
-
-    QTextTable *table = cursor.insertTable(1, 8, tableFormat);
-
-
-    QTextFrame *frame = cursor.currentFrame();
-    QTextFrameFormat frameFormat = frame->frameFormat();
-    frameFormat.setBorder(1);
-    frame->setFrameFormat(frameFormat);
-
-
-    QTextCharFormat format = cursor.charFormat();
-    format.setFontPointSize(fontSize);
-
-    QTextCharFormat boldFormat = format;
-    boldFormat.setFontWeight(QFont::Bold);
-
-    QTextCharFormat highlightedFormat = boldFormat;
-    highlightedFormat.setBackground(Qt::white);
-
-
-    for (int weekDay = 1; weekDay <= 7; ++weekDay) {
-        QTextTableCell cell = table->cellAt(0, weekDay-1);
-        QTextCursor cellCursor = cell.firstCursorPosition();
-        cellCursor.insertText(QString("%1").arg(QDate::longDayName(weekDay)),
-                              boldFormat);
-    }
-    QTextTableCell cell = table->cellAt(0, 7);
-    QTextCursor cellCursor = cell.firstCursorPosition();
-    cellCursor.insertText(QString("Week"), boldFormat);
-
-    table->insertRows(table->rows(), 1);
-
-
-    while (date.month() == selectedDate.month()) {
-        int weekDay = date.dayOfWeek();
-        QTextTableCell cell = table->cellAt(table->rows()-1, weekDay-1);
-        QTextCursor cellCursor = cell.firstCursorPosition();
-
-
-        if (date == QDate::currentDate())
-            cellCursor.insertText(QString("%1").arg(date.day()), highlightedFormat);
-        else
-            cellCursor.insertText(QString("%1").arg(date.day()), format);
-
-            QTextTableCell weekNoCell = table->cellAt(table->rows()-1, 7);
-            QTextCursor weekNoCellCursor = weekNoCell.firstCursorPosition();
-            weekNoCellCursor.insertText(QString("%1").arg(date.weekNumber()), format);
-
-
-
-        date = date.addDays(1);
-        if (weekDay == 7 && date.month() == selectedDate.month())
-            table->insertRows(table->rows(), 1);
-    }
-
-    cursor.endEditBlock();
-
-    setWindowTitle(tr("Daily Organiser, %1, %2"
-        ).arg(QDate::longMonthName(selectedDate.month())
-        ).arg(selectedDate.year()));
+void MainWindow::firstDayChanged(int index)
+{
+    calendar->setFirstDayOfWeek(Qt::DayOfWeek(
+                                firstDayCombo->itemData(index).toInt()));
 }
 
 
-void MainWindow::setMonth(int month)
+void MainWindow::selectedDateChanged()
 {
-    selectedDate = QDate(selectedDate.year(), month + 1, selectedDate.day());
-    insertCalendar();
+    currentDateEdit->setDate(calendar->selectedDate());
 }
 
-void MainWindow::setYear(int year)
+
+void MainWindow::createCalendarViewGroupBox()
 {
-    selectedDate = QDate(year + 2000, selectedDate.month(), selectedDate.day());
-    insertCalendar();
+    calendarViewGroupBox = new QGroupBox(tr("Calendar"));
+
+    calendar = new QCalendarWidget;
+    calendar->setMinimumDate(QDate(2012, 1, 1));
+    calendar->setMaximumDate(QDate(2016, 1, 1));
+    calendar->setGridVisible(false);
+
+    calendarViewLayout = new QGridLayout;
+    calendarViewLayout->addWidget(calendar, 0, 0, Qt::AlignCenter);
+    calendarViewGroupBox->setLayout(calendarViewLayout);
+}
+
+void MainWindow::createDayViewGroupBox() {
+
+    dayViewGroupBox = new QGroupBox(tr("Day View"));
+}
+
+void MainWindow::createOptionsGroupBox()
+{
+    optionsGroupBox = new QGroupBox(tr("Options"));
+
+    localeCombo = new QComboBox;
+    QLocale::Language polish = QLocale::Polish;
+    QString plLabel = QLocale::languageToString(polish);
+    QLocale::Language english = QLocale::English;
+    QString enLabel = QLocale::languageToString(english);
+
+    localeCombo->addItem(plLabel, polish);
+    localeCombo->addItem(enLabel, english);
+
+    localeLabel = new QLabel(tr("Language"));
+    localeLabel->setBuddy(localeCombo);
+
+    firstDayCombo = new QComboBox;
+    firstDayCombo->addItem(tr("Sunday"), Qt::Sunday);
+    firstDayCombo->addItem(tr("Monday"), Qt::Monday);
+
+
+    firstDayLabel = new QLabel(tr("Week starts on:"));
+    firstDayLabel->setBuddy(firstDayCombo);
+
+    connect(localeCombo, SIGNAL(currentIndexChanged(int)),
+            this, SLOT(localeChanged(int)));
+    connect(firstDayCombo, SIGNAL(currentIndexChanged(int)),
+            this, SLOT(firstDayChanged(int)));
+
+
+    QGridLayout *outerLayout = new QGridLayout;
+    outerLayout->addWidget(localeLabel, 0, 0);
+    outerLayout->addWidget(localeCombo, 0, 1);
+    outerLayout->addWidget(firstDayLabel, 1, 0);
+    outerLayout->addWidget(firstDayCombo, 1, 1);
+
+    optionsGroupBox->setLayout(outerLayout);
+
+    firstDayChanged(firstDayCombo->currentIndex());
 }
 

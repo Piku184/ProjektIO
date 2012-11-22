@@ -1,33 +1,51 @@
 
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#ifndef WINDOW_H
+#define WINDOW_H
 
-#include <QDate>
-#include <QMainWindow>
-#include <QString>
+#include <QWidget>
 
-QT_BEGIN_NAMESPACE
-class QTextBrowser;
-QT_END_NAMESPACE
+class QCalendarWidget;
+class QCheckBox;
+class QComboBox;
+class QDate;
+class QDateEdit;
+class QGroupBox;
+class QLabel;
+class QGridLayout;
 
-
-class MainWindow : public QMainWindow
+class MainWindow : public QWidget
 {
     Q_OBJECT
 
 public:
     MainWindow();
 
-public slots:
-    void setMonth(int month);
-    void setYear(int year);
+private slots:
+    void localeChanged(int index);
+    void firstDayChanged(int index);
+    void selectedDateChanged();
+
 
 private:
-    void insertCalendar();
+    void createCalendarViewGroupBox();
+    void createOptionsGroupBox();
+    void createDayViewGroupBox();
 
-    int fontSize;
-    QDate selectedDate;
-    QTextBrowser *editor;
+    QGroupBox *calendarViewGroupBox;
+    QGridLayout *calendarViewLayout;
+    QCalendarWidget *calendar;
+
+    QGroupBox *optionsGroupBox;
+    QLabel *localeLabel;
+    QLabel *firstDayLabel;
+    QComboBox *localeCombo;
+    QComboBox *firstDayCombo;
+    QGroupBox *datesGroupBox;
+    QLabel *currentDateLabel;
+    QDateEdit *currentDateEdit;
+
+    QGroupBox *dayViewGroupBox;
+
 };
 
 #endif
