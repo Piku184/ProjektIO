@@ -1,4 +1,3 @@
-
 #include <QtGui>
 
 #include "mainwindow.h"
@@ -40,6 +39,30 @@ void MainWindow::selectedDateChanged()
     currentDateEdit->setDate(calendar->selectedDate());
 }
 
+/*void MainWindow::checkItem()
+{
+		if(newItem1->QListWidgetItem::checkState() == Qt::Checked)
+		newItem1->setCheckState(Qt::Unchecked);
+		if(newItem1->QListWidgetItem::checkState() == Qt::Unchecked)
+		newItem1->setCheckState(Qt::Checked);
+}*/
+
+void MainWindow::dayClicked()
+{
+	QListWidget *taskList = new QListWidget;
+	QListWidgetItem *newItem1 = new QListWidgetItem;
+    newItem1->setText("Zadanie 1");
+    taskList->insertItem(1, newItem1);
+	newItem1->setFlags(newItem1->flags()& Qt::ItemIsUserCheckable);
+	newItem1->setCheckState(Qt::Checked);
+	/*QObject::connect(newItem1, SIGNAL(itemClicked ( QListWidgetItem * item )),
+            this, SLOT(checkItem()));*/
+	
+	QGridLayout *dayViewBoxLayout = new QGridLayout;
+	
+	dayViewBoxLayout->addWidget(taskList, 0, 0);
+	dayViewGroupBox->setLayout(dayViewBoxLayout);
+}
 
 void MainWindow::createCalendarViewGroupBox()
 {
@@ -58,7 +81,11 @@ void MainWindow::createCalendarViewGroupBox()
 void MainWindow::createDayViewGroupBox() {
 
     dayViewGroupBox = new QGroupBox(tr("Day View"));
+	connect(calendar, SIGNAL(clicked(const QDate&)),
+            this, SLOT(dayClicked()));
+
 }
+
 
 void MainWindow::createOptionsGroupBox()
 {
@@ -100,4 +127,3 @@ void MainWindow::createOptionsGroupBox()
 
     firstDayChanged(firstDayCombo->currentIndex());
 }
-

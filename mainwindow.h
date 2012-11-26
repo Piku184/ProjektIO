@@ -1,4 +1,3 @@
-
 #ifndef WINDOW_H
 #define WINDOW_H
 
@@ -13,6 +12,7 @@ class QGroupBox;
 class QLabel;
 class QGridLayout;
 
+
 class MainWindow : public QWidget
 {
     Q_OBJECT
@@ -24,6 +24,7 @@ private slots:
     void localeChanged(int index);
     void firstDayChanged(int index);
     void selectedDateChanged();
+	void dayClicked();
 
 
 private:
@@ -45,6 +46,7 @@ private:
     QDateEdit *currentDateEdit;
 
     QGroupBox *dayViewGroupBox;
+	QCheckBox *checkbox;
 
 };
 
