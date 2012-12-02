@@ -7,15 +7,15 @@
 class Task
 {
     bool ifDone;
-    QString name;
-    QString description;
-    QDateTime startTime;
-    QDateTime endTime;
+    QString *name;
+    QString *description;
+    QDateTime *startTime;
+    QDateTime *endTime;
     bool neededReminder;
-    QDateTime reminderTime;
+    QDateTime *reminderTime;
 
 public:
-    Task(QString _name, QString _description, QDate *dayClicked, int startHour, int startMinute, int endHour, int endMinute, bool reminder);
+    Task(QString *_name, QString *_description, QDate *dayClicked, int startHour, int startMinute, int endHour, int endMinute, bool reminder);
 };
 
 #endif // TASK_H

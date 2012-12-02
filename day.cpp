@@ -1,11 +1,8 @@
 #include "day.h"
 
-Day::Day(QObject *parent) :
-    QObject(parent)
+Day::Day(QDate dateClicked)
 {
-    Day::Day(QDate *dateClicked){
-        date = dateClicked;
-        taskList = new QWidgetList;
-    }
+    this->date = &dateClicked;
+    this->taskList = new QList<Task>;
 
 }

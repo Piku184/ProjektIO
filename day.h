@@ -1,27 +1,15 @@
 #ifndef DAY_H
 #define DAY_H
 
-#include <QObject>
-#include <QWidget>
 #include <QDate>
 #include "task.h"
 
-class Day : public QObject
+class Day
 {
-    Q_OBJECT
-
-    QDate date;
-    QWidgetList taskList;
-
-
+    QDate *date;
+    QList<Task> *taskList;
 public:
-    explicit Day(QObject *parent = 0);  
-    Day(QDate *dateClicked);
-
-signals:
-    
-public slots:
-    
+    Day( QDate dateClicked);
 };
 
 #endif // DAY_H
