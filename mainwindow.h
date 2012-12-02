@@ -2,6 +2,9 @@
 #define WINDOW_H
 
 #include <QWidget>
+#include "day.h"
+#include "task.h"
+#include <QList>
 
 class QCalendarWidget;
 class QCheckBox;
@@ -13,6 +16,7 @@ class QLabel;
 class QGridLayout;
 class QListWidget;
 class QListWidgetItem;
+class QButton;
 
 class MainWindow : public QWidget
 {
@@ -49,6 +53,8 @@ private:
 
     QGroupBox *dayViewGroupBox;
 	QCheckBox *checkbox;
+
+    QList<Day> *daysList;
 
 };
 

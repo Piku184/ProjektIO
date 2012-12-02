@@ -8,7 +8,7 @@ MainWindow::MainWindow()
     createOptionsGroupBox();
     createDayViewGroupBox();
 
-
+    daysList = new QList<Day>;
     QGridLayout *layout = new QGridLayout;
     layout->addWidget(calendarViewGroupBox, 0, 0);
     layout->addWidget(optionsGroupBox, 1, 0);
@@ -57,10 +57,13 @@ void MainWindow::dayClicked()
     newItem1->setCheckState(Qt::Unchecked);
     connect(taskList, SIGNAL(itemClicked ( QListWidgetItem * item )),
             this, SLOT(checkItem( newItem1)));
-	
+    QPushButton *newTaskButton = new QPushButton(tr("+ New Task"), this);
+    QPushButton *deleteTaskButton = new QPushButton(tr("Delete task"),this);
 	QGridLayout *dayViewBoxLayout = new QGridLayout;
 	
-	dayViewBoxLayout->addWidget(taskList, 0, 0);
+    dayViewBoxLayout->addWidget(taskList, 0, 0, 4, 2);
+    dayViewBoxLayout->addWidget(newTaskButton,4,0);
+    dayViewBoxLayout->addWidget(deleteTaskButton,4,1);
 	dayViewGroupBox->setLayout(dayViewBoxLayout);
 }
 
@@ -81,6 +84,8 @@ void MainWindow::createCalendarViewGroupBox()
 void MainWindow::createDayViewGroupBox() {
 
     dayViewGroupBox = new QGroupBox(tr("Day View"));
+    QGridLayout *dayViewLayout = new QGridLayout();
+
 	connect(calendar, SIGNAL(clicked(const QDate&)),
             this, SLOT(dayClicked()));
 
