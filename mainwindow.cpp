@@ -39,13 +39,13 @@ void MainWindow::selectedDateChanged()
     currentDateEdit->setDate(calendar->selectedDate());
 }
 
-/*void MainWindow::checkItem()
+void MainWindow::checkItem(QListWidgetItem *newItem)
 {
-		if(newItem1->QListWidgetItem::checkState() == Qt::Checked)
-		newItem1->setCheckState(Qt::Unchecked);
-		if(newItem1->QListWidgetItem::checkState() == Qt::Unchecked)
-		newItem1->setCheckState(Qt::Checked);
-}*/
+        if(newItem->QListWidgetItem::checkState() == Qt::Checked)
+        newItem->setCheckState(Qt::Unchecked);
+        if(newItem->QListWidgetItem::checkState() == Qt::Unchecked)
+        newItem->setCheckState(Qt::Checked);
+}
 
 void MainWindow::dayClicked()
 {
@@ -54,9 +54,9 @@ void MainWindow::dayClicked()
     newItem1->setText("Zadanie 1");
     taskList->insertItem(1, newItem1);
 	newItem1->setFlags(newItem1->flags()& Qt::ItemIsUserCheckable);
-	newItem1->setCheckState(Qt::Checked);
-	/*QObject::connect(newItem1, SIGNAL(itemClicked ( QListWidgetItem * item )),
-            this, SLOT(checkItem()));*/
+    newItem1->setCheckState(Qt::Unchecked);
+    connect(taskList, SIGNAL(itemClicked ( QListWidgetItem * item )),
+            this, SLOT(checkItem( newItem1)));
 	
 	QGridLayout *dayViewBoxLayout = new QGridLayout;
 	

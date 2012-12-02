@@ -1,6 +1,10 @@
-HEADERS =   mainwindow.h
+HEADERS =   mainwindow.h \
+    day.h \
+    task.h
  SOURCES =   main.cpp \
-             mainwindow.cpp
+             mainwindow.cpp \
+    day.cpp \
+    task.cpp
 
  # install
  target.path = $$[QT_INSTALL_EXAMPLES]/widgets/calendarwidget

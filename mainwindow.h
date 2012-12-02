@@ -11,7 +11,8 @@ class QDateEdit;
 class QGroupBox;
 class QLabel;
 class QGridLayout;
-
+class QListWidget;
+class QListWidgetItem;
 
 class MainWindow : public QWidget
 {
@@ -25,6 +26,7 @@ private slots:
     void firstDayChanged(int index);
     void selectedDateChanged();
 	void dayClicked();
+    void checkItem(QListWidgetItem *newItem);
 
 
 private:
