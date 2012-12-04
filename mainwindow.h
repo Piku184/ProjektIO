@@ -4,6 +4,7 @@
 #include <QWidget>
 #include "day.h"
 #include "task.h"
+#include "newtaskdialog.h"
 #include <QList>
 
 class QCalendarWidget;
@@ -17,6 +18,7 @@ class QGridLayout;
 class QListWidget;
 class QListWidgetItem;
 class QButton;
+class QDialog;
 
 class MainWindow : public QWidget
 {
@@ -32,6 +34,7 @@ private slots:
     void dayClicked(const QDate date);
     void checkItem(QListWidgetItem *newItem);
     void taskWindowPopup();
+    void newTaskBtnClicked();
 
 
 private:
@@ -54,6 +57,7 @@ private:
     QLabel *informationLabel;
     QGroupBox *dayViewGroupBox;
 	QCheckBox *checkbox;
+    QDialog *newTaskDialog;
 
     QGridLayout *dayViewBoxLayout;
 

@@ -75,7 +75,7 @@ void MainWindow::dayClicked(const QDate date)
                 newItem->setCheckState(Qt::Unchecked);
                 taskListWidget->insertItem(j+1, newItem);
             }
-            connect(taskListWidget, SIGNAL(itemClicked(QListWidgetItem* item)), this, SLOT(taskWindowPopup()));
+            connect(taskListWidget, SIGNAL(itemDoubleClicked(QListWidgetItem* item)), this, SLOT(taskWindowPopup()));
             break;
         } else {
             counter++;
@@ -91,7 +91,7 @@ void MainWindow::dayClicked(const QDate date)
         noTasks->setText(*noTasksForToday);
         emptyList->insertItem(1, noTasks);
         QPushButton *newTaskButton = new QPushButton(tr("+ New Task"), this);
-
+        connect(newTaskButton, SIGNAL(clicked()), this, SLOT(newTaskBtnClicked()));
         if(!dayViewBoxLayout->isEmpty())
             dayViewBoxLayout->removeWidget(emptyList);
 
@@ -174,8 +174,10 @@ void MainWindow::createOptionsGroupBox()
 void MainWindow::taskWindowPopup() {
         QMessageBox::StandardButton reply;
         reply = QMessageBox::information(this, tr("QMessageBox::information()"), MESSAGE);
-        if (reply == QMessageBox::Ok)
-            informationLabel->setText(tr("OK"));
-        else
-            informationLabel->setText(tr("Escape"));
+
+}
+
+void MainWindow::newTaskBtnClicked() {
+    NewTaskDialog *dialog = new NewTaskDialog;
+    dialog->show();
 }
