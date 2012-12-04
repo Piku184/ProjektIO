@@ -29,8 +29,9 @@ private slots:
     void localeChanged(int index);
     void firstDayChanged(int index);
     void selectedDateChanged();
-	void dayClicked();
+    void dayClicked(const QDate date);
     void checkItem(QListWidgetItem *newItem);
+    void taskWindowPopup();
 
 
 private:
@@ -50,11 +51,14 @@ private:
     QGroupBox *datesGroupBox;
     QLabel *currentDateLabel;
     QDateEdit *currentDateEdit;
-
+    QLabel *informationLabel;
     QGroupBox *dayViewGroupBox;
 	QCheckBox *checkbox;
 
+    QGridLayout *dayViewBoxLayout;
+
     QList<Day> *daysList;
+    int checkLayout;
 
 };
 

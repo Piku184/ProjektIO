@@ -1,12 +1,18 @@
 #include <QtGui>
+#include <iostream>
 
 #include "mainwindow.h"
+
+#define MESSAGE \
+    MainWindow::tr("<p>This shows only in order to check validity. ")
 
 MainWindow::MainWindow()
 {
     createCalendarViewGroupBox();
     createOptionsGroupBox();
     createDayViewGroupBox();
+    checkLayout = 0;
+    dayViewBoxLayout = new QGridLayout;
 
     daysList = new QList<Day>;
     QGridLayout *layout = new QGridLayout;
@@ -47,24 +53,57 @@ void MainWindow::checkItem(QListWidgetItem *newItem)
         newItem->setCheckState(Qt::Checked);
 }
 
-void MainWindow::dayClicked()
+void MainWindow::dayClicked(const QDate date)
 {
-	QListWidget *taskList = new QListWidget;
-	QListWidgetItem *newItem1 = new QListWidgetItem;
-    newItem1->setText("Zadanie 1");
-    taskList->insertItem(1, newItem1);
-	newItem1->setFlags(newItem1->flags()& Qt::ItemIsUserCheckable);
-    newItem1->setCheckState(Qt::Unchecked);
-    connect(taskList, SIGNAL(itemClicked ( QListWidgetItem * item )),
-            this, SLOT(checkItem( newItem1)));
-    QPushButton *newTaskButton = new QPushButton(tr("+ New Task"), this);
-    QPushButton *deleteTaskButton = new QPushButton(tr("Delete task"),this);
-	QGridLayout *dayViewBoxLayout = new QGridLayout;
-	
-    dayViewBoxLayout->addWidget(taskList, 0, 0, 4, 2);
-    dayViewBoxLayout->addWidget(newTaskButton,4,0);
-    dayViewBoxLayout->addWidget(deleteTaskButton,4,1);
-	dayViewGroupBox->setLayout(dayViewBoxLayout);
+    int counter = 0;
+    QListWidget *taskListWidget = new QListWidget;
+    for( int i = 0; i < daysList->count(); i++) {
+
+        if (&date == daysList->at(i).date) {
+            for( int j = 0; daysList->at(i).taskList->count(); j++) {
+                QString *appender = new QString;
+                appender->append(daysList->at(i).taskList->at(j).name);
+                appender->append(" ");
+                appender->append(daysList->at(i).taskList->at(j).start->toString("HH:mm"));
+                appender->append(" - ");
+                appender->append(daysList->at(i).taskList->at(j).end->toString("HH:mm"));
+
+                QListWidgetItem *newItem = new QListWidgetItem;
+                newItem->setText(*appender);
+                newItem->setFlags(Qt::ItemIsSelectable);
+                newItem->setFlags(Qt::ItemIsUserCheckable);
+                newItem->setCheckState(Qt::Unchecked);
+                taskListWidget->insertItem(j+1, newItem);
+            }
+            connect(taskListWidget, SIGNAL(itemClicked(QListWidgetItem* item)), this, SLOT(taskWindowPopup()));
+            break;
+        } else {
+            counter++;
+        }
+    }
+    if(counter == daysList->count() || daysList->isEmpty()) {
+        Day *newDay = new Day(date);
+        daysList->append(*newDay);
+        QListWidget *emptyList = new QListWidget;
+        QListWidgetItem *noTasks = new QListWidgetItem;
+        QString *noTasksForToday = new QString;
+        noTasksForToday->append( tr("No tasks for %1").arg(date.toString()));
+        noTasks->setText(*noTasksForToday);
+        emptyList->insertItem(1, noTasks);
+        QPushButton *newTaskButton = new QPushButton(tr("+ New Task"), this);
+
+        if(!dayViewBoxLayout->isEmpty())
+            dayViewBoxLayout->removeWidget(emptyList);
+
+        dayViewBoxLayout->addWidget(emptyList, 0, 0);
+        dayViewBoxLayout->addWidget(newTaskButton, 4, 0);
+
+        if(checkLayout == 0) {
+        dayViewGroupBox->setLayout(dayViewBoxLayout);
+        checkLayout++;
+        }
+
+    }
 }
 
 void MainWindow::createCalendarViewGroupBox()
@@ -84,10 +123,9 @@ void MainWindow::createCalendarViewGroupBox()
 void MainWindow::createDayViewGroupBox() {
 
     dayViewGroupBox = new QGroupBox(tr("Day View"));
-    QGridLayout *dayViewLayout = new QGridLayout();
 
 	connect(calendar, SIGNAL(clicked(const QDate&)),
-            this, SLOT(dayClicked()));
+            this, SLOT(dayClicked(const QDate&)));
 
 }
 
@@ -131,4 +169,13 @@ void MainWindow::createOptionsGroupBox()
     optionsGroupBox->setLayout(outerLayout);
 
     firstDayChanged(firstDayCombo->currentIndex());
+}
+
+void MainWindow::taskWindowPopup() {
+        QMessageBox::StandardButton reply;
+        reply = QMessageBox::information(this, tr("QMessageBox::information()"), MESSAGE);
+        if (reply == QMessageBox::Ok)
+            informationLabel->setText(tr("OK"));
+        else
+            informationLabel->setText(tr("Escape"));
 }

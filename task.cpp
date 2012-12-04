@@ -7,8 +7,8 @@ Task::Task(QString *_name, QString *_description, QDate *dayClicked, int startHo
     ifDone = 0;
     name = _name;
     description = _description;
-    QTime *start = new QTime(startHour, startMinute);
-    QTime *end = new QTime(endHour, endMinute);
+    start = new QTime(startHour, startMinute);
+    end = new QTime(endHour, endMinute);
     startTime = new QDateTime(*dayClicked, *start);
     endTime = new QDateTime(*dayClicked, *end);
     neededReminder = reminder;

@@ -6,9 +6,9 @@
 
 class Day
 {
+  public:
     QDate *date;
     QList<Task> *taskList;
-public:
     Day( QDate dateClicked);
 };
 
